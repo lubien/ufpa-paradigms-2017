@@ -155,6 +155,60 @@ int equal_list(List * xs, List * ys) {
 	return equal_list(tail(xs), tail(ys));
 }
 
+List * remove_all_equal(int x, List * xs) {
+	if (empty(xs))
+		return NULL;
+	if (head(xs) == x)
+		return remove_all_equal(x, tail(xs));
+	return list(head(xs), remove_all_equal(x, tail(xs)));
+}
+
+List * remove_duplicated(List * xs) {
+	if (empty(xs))
+		return NULL;
+	return list(head(xs),
+				remove_duplicated(remove_all_equal(head(xs), tail(xs))));
+}
+
+int is_ascending(List * xs) {
+	if (empty(xs) || empty(tail(xs)))
+		return 1;
+	if (head(xs) <= head(tail(xs)))
+		return is_ascending(tail(xs));
+	return 0;
+}
+
+int ordered_insert(int x, List * xs) {
+	if (empty(xs))
+		return list(x, NULL);
+	if (head(xs) > x)
+		return list(x, xs);
+	return list(head(xs), ordered_insert(x, tail(xs)));
+}
+
+int index_of_tail(int x, List * xs, int count) {
+	if (empty(xs))
+		return -1;
+	if (head(xs) == x)
+		return count;
+	return index_of_tail(x, tail(xs), count + 1);
+}
+
+int index_of(int x, List * xs) {
+	return index_of_tail(x, xs, 0);
+}
+
+List * merge(List * xs, List * ys) {
+	if (empty(xs))
+		return ys;
+	if (empty(ys))
+		return xs;
+	if (head(xs) <= head(ys))
+		return list(head(xs), merge(tail(xs), ys));
+	else
+		return list(head(ys), merge(xs, tail(ys)));
+}
+
 void write(char str[]) {
 	printf("%s", str);
 }
@@ -193,18 +247,20 @@ int main() {
     write("L1 without the last element is ");write_list(init(L1));
 
 	L1 = list(1, list(2, list(1, NULL)));
-	L2 = list(1,list(5, list(6, list(7, NULL))));
+	L2 = list(1, list(5, list(6, list(7, NULL))));
     write("Is L1 a palindrome? ");printf("%d\n", palindrome(L1));
     write("Is L2 a palindrome? ");printf("%d\n", palindrome(L2));
     write("Are L1 and L1 equal? ");printf("%d\n", equal_list(L1, L1));
     write("Are L1 and L2 equal? ");printf("%d\n", equal_list(L1, L2));
 	List * L4 = list(4,list(6,list(3,list(4,list(2,list(6,list(4,NULL)))))));
-//	write("Removendo os duplicados de L4: ");
-//	write_list(remDupl(L4));write("A lista L1 está ordenada ? "+isOrd(L1));nl();
-//	write("Inserindo 4 na lista L2: ");write_list(insOrd(4,L1));nl();
-//	write("O 3 elemento da lista L1 é: "+enesimo(3,L1));nl();
-//	Lista L1 = list(1, list(2, list(11, null)));
-//	write("Merge de L1 e L2");wlist(merge(L1,L2));nl();
-//	Lista L4 = list(4,list(6,list(3,list(4,list(2,list(6,list(4,null)))))));
+    write("L4 without duplicated elements is ");write_list(remove_duplicated(L4));
+    write("Is L1 ascending? ");printf("%d\n", is_ascending(L1));
+    write("Inserting 4 into the ordered list L2 is ");write_list(ordered_insert(4, L2));
+    write("What is the index of 3 in L1? ");printf("%d\n", index_of(3, L1));
+    write("The third element of L1 is ");printf("%d\n", nth(2, L1));
+	L1 = list(1, list(2, list(11, NULL)));
+    write("Merging the two ordered lists L1 and l2 is ");write_list(merge(L1, L2));
+	L4 = list(4,list(6,list(3,list(4,list(2,list(6,list(4,null)))))));
+    write("Merge sorting of L4 is ");write_list(merge_sort(L2));
 //	write("Merge sort de L4: ");write_list(mergeSort(L4));
 }
