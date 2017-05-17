@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 int max(int x, int y) {
 	if (x > y)
@@ -123,6 +124,18 @@ int nth(int i, List * xs) {
 	return nth(i - 1, tail(xs));
 }
 
+int take(int i, List * xs) {
+	if (i == 0)
+		return NULL;
+	return list(head(xs), take(i - 1, tail(xs)));
+}
+
+int drop(int i, List * xs) {
+	if (i == 0)
+		return xs;
+	return drop(i - 1, tail(xs));
+}
+
 int drop_index(int i, List * xs) {
 	if (i == 0)
 		return tail(xs);
@@ -209,6 +222,20 @@ List * merge(List * xs, List * ys) {
 		return list(head(ys), merge(xs, tail(ys)));
 }
 
+List * merge_sort2(List * xs, int len) {
+	if (len == 1)
+		return xs;
+
+	int half = floor(len / 2);
+	return merge( merge_sort2(take(half, xs), half),
+				  merge_sort2(drop(half, xs), len - half)
+				);
+}
+
+List * merge_sort(List * xs) {
+	return merge_sort2(xs, length(xs));
+}
+
 void write(char str[]) {
 	printf("%s", str);
 }
@@ -260,7 +287,6 @@ int main() {
     write("The third element of L1 is ");printf("%d\n", nth(2, L1));
 	L1 = list(1, list(2, list(11, NULL)));
     write("Merging the two ordered lists L1 and l2 is ");write_list(merge(L1, L2));
-	L4 = list(4,list(6,list(3,list(4,list(2,list(6,list(4,null)))))));
-    write("Merge sorting of L4 is ");write_list(merge_sort(L2));
-//	write("Merge sort de L4: ");write_list(mergeSort(L4));
+	L4 = list(4,list(6,list(3,list(4,list(2,list(6,list(4,NULL)))))));
+    write("Merge sorting of L4 is ");write_list(merge_sort(L4));
 }
